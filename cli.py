@@ -23,9 +23,9 @@ def addVid(video_file_path):
 
 
 def run():
-    "Run the program"
+    click.echo("Run the program")
 
-    python_path = "SWE-Capstone/index.py"
+    python_path = "& C:/Users/treyr/AppData/Local/Programs/Python/Python311/python.exe c:/Users/treyr/OneDrive/Documents/GitHub/SWE-Capstone/index.py"
     result = subprocess.run(["python", python_path], capture_output=True, text=True)
     if result.returncode == 0:
         click.echo("Success!")
