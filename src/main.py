@@ -41,7 +41,7 @@ args: Namespace = parser.parse_args()
 if args.command == "r":
     print(f"Input file '{args.input_file}' is accepted.")
 
-    videos_dir = os.path.join("src", "videos")
+    videos_dir = os.path.join("videos")
     if not os.path.exists(videos_dir):
         os.makedirs(videos_dir)
 
@@ -52,7 +52,7 @@ if args.command == "r":
 elif args.command == "p":
     print(f"Input file '{args.input_file}' is processing...")
 
-    capture = cv2.VideoCapture("./videos/CW Signal.mp4")
+    capture = cv2.VideoCapture("./videos/" + args.input_file)
 
     # Tweak and test these
     lower = 200  # Lower threshold value
