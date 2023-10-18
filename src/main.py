@@ -38,7 +38,7 @@ args: Namespace = parser.parse_args()
 
 # Preform the action based on the given subcommand
 if args.command == "r":
-    print(f"Input file '{args.input_file}' is accepted.")
+    print(f"Input file '{args.input_file}' is accepted TREY.")
 
     videos_dir = os.path.join("src", "videos")
     if not os.path.exists(videos_dir):
