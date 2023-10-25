@@ -41,13 +41,13 @@ args: Namespace = parser.parse_args()
 if args.command == "r":
     print(f"Input file '{args.input_file}' is accepted.")
 
-    videos_dir = os.path.join("videos")
-    if not os.path.exists(videos_dir):
-        os.makedirs(videos_dir)
+    #videos_dir = os.path.join("videos")
+    #if not os.path.exists(videos_dir):
+    #    os.makedirs(videos_dir)
 
-    destination = os.path.join(videos_dir, os.path.basename(args.input_file))
-    shutil.copy(args.input_file, destination)
-    print(f"Video copied to '{destination}'")
+    #destination = os.path.join(videos_dir, os.path.basename(args.input_file))
+    #shutil.copy(args.input_file, destination)
+    #print(f"Video copied to '{destination}'")
 
 elif args.command == "p":
     print(f"Input file '{args.input_file}' is processing...")
