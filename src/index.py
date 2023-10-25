@@ -21,7 +21,7 @@ while True:
         # coordinate (row_end, column_end).
         crop = frame[150:900, 700:1600]
 
-        # Convert the grayscale image to a binary mask
+        # Convert to grayscale and blur to remove noise
         gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
 
         gray = cv2.medianBlur(gray, 5)
@@ -42,8 +42,8 @@ while True:
 
         # Draw contour with largest area
         # (Doesn't seem to do anything, can't figure out why)
-        # c = max(contours, key=cv2.contourArea)
-        # cv2.drawContours(binary_mask, [c], 0, (0, 255, 0), 3)
+        c = max(contours, key=cv2.contourArea)
+        cv2.drawContours(binary_mask, [c], 0, (0, 255, 0), 3)
 
         cv2.imshow('Edge', binary_mask)
 
