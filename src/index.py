@@ -9,10 +9,13 @@ capture = cv2.VideoCapture("./videos/CW Signal.mp4")
 # Tweak and test these
 lower = 190   # Lower threshold value
 upper = 200   # Upper threshold value
+contour_areas = []
 
 while True:
         ret, frame = capture.read()
-
+        
+        if frame is None:
+                break
         # Crop Video
         # The frame is treated as a 2D array of pixels.
         # Using array slicing, we specify row_start:row_end, column_start:column_end.
@@ -41,17 +44,21 @@ while True:
         contours, hierarchy = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Draw contour with largest area
-        # (Doesn't seem to do anything, can't figure out why)
         c = max(contours, key=cv2.contourArea)
-        binary_mask = cv2.drawContours(crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA)
-        # for c in contours:
-        #        cv2.drawContours(frame, [c], -1, (0,255,0), 3)
-        
-        cv2.imshow('Edge', crop)
+        contour_areas.append(cv2.contourArea(c))
+        # Skip frames the largest contour does not meet a minimum size
+        # This is to avoid recording data in the frames where the radio signal briefly disappears
+        if int(cv2.contourArea(c)) > 30_000:  
+                binary_mask = cv2.drawContours(crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA)
+                
+                cv2.imshow('Edge', crop)
 
-        key = cv2.waitKey(30)
-        if key == 27:
-                break
+                key = cv2.waitKey(30)
+                if key == 27:
+                        break
         
 capture.release()
 cv2.destroyAllWindows()
+
+average_area = int(sum(contour_areas) / len(contour_areas))
+print("Average size of largest contour : " + str(average_area))
