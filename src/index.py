@@ -24,10 +24,10 @@ while True:
         # Convert to grayscale and blur to remove noise
         gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
 
-        gray = cv2.medianBlur(gray, 5)
+        blur = cv2.medianBlur(gray, 5)
 
         # Detect Edges
-        canny = cv2.Canny(gray, lower, upper)
+        canny = cv2.Canny(blur, lower, upper)
 
         # Make edge lines thicker
         kernel = np.ones((5, 5), np.uint8)
@@ -43,9 +43,11 @@ while True:
         # Draw contour with largest area
         # (Doesn't seem to do anything, can't figure out why)
         c = max(contours, key=cv2.contourArea)
-        cv2.drawContours(binary_mask, [c], 0, (0, 255, 0), 3)
-
-        cv2.imshow('Edge', binary_mask)
+        binary_mask = cv2.drawContours(crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA)
+        # for c in contours:
+        #        cv2.drawContours(frame, [c], -1, (0,255,0), 3)
+        
+        cv2.imshow('Edge', crop)
 
         key = cv2.waitKey(30)
         if key == 27:
