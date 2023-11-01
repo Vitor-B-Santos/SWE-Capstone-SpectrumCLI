@@ -19,7 +19,7 @@ while True:
         # Essentially, the top right corner of the video is the coordinate
         # (row_start, column_start) and the bottom right corner is the
         # coordinate (row_end, column_end).
-        crop = frame[150:900, 700:1600]
+        crop = frame[200:900, 700:1600]
 
         # Convert to grayscale and blur to remove noise
         gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
@@ -31,7 +31,7 @@ while True:
 
         # Make edge lines thicker
         kernel = np.ones((5, 5), np.uint8)
-        binary_mask = cv2.dilate(canny, kernel, iterations=3)
+        binary_mask = cv2.dilate(canny, kernel, iterations=5)
 
         # Identify shapes in black and white mask
         # Find contours returns a list of contour object which we can work with
