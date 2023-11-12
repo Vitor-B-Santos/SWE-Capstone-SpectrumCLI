@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def save_as_csv(
-    data: List[Dict[str, Union[str, float, datetime, time]]], output_file: str
+    data: List[Dict[str, Union[datetime, float]]], output_file: str
 ) -> None:
     try:
         # Convert the list of dictionaries to a DataFrame
@@ -32,17 +32,16 @@ def save_as_csv(
 
         # Ensure correct column order
         columns_order = [
-            "start_time",
-            "end_time",
-            "frequency",
+            "timestamp",
             "min_amplitude",
             "max_amplitude",
-            "avg_amplitude",
+            "average_amplitude",
+            "frequency",
         ]
         df = df[columns_order]
 
         # Save the DataFrame to a CSV file
-        df.to_csv(output_file, index=False)
+        df.to_csv(data / output_file, index=False)
         logging.info(f"Data successfully saved to {output_file}")
 
     except Exception as e:
