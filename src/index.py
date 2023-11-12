@@ -5,7 +5,7 @@ import matplotlib.pyplot as pit
 import datetime
 import csv_utils
 
-capture = cv2.VideoCapture("./videos/CW Signal.mp4")
+capture = cv2.VideoCapture("./videos/Pulsed Signal.mp4")
 
 # Properties of spectrum analyzer
 scale = -100
@@ -20,7 +20,20 @@ amplitudes = []
 frame_data = []
 
 _, first_frame = capture.read()
+
+instructions = [
+    "Instructions:",
+    "- Click and drag to select ROI",
+    "- Press 'Enter' to confirm selection",
+    "- Cancel the selection process by pressing c button!",
+    "- Press 'q' to exit"
+]
+
+for i, instruction in enumerate(instructions):
+    cv2.putText(first_frame, instruction, (10, 30 + i * 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
 roi = cv2.selectROI(first_frame)
+cv2.destroyWindow("ROI Selection Instructions")
 
 while True:
     ret, frame = capture.read()
@@ -28,13 +41,7 @@ while True:
     if frame is None:
         break
 
-    # Crop Video
-    # The frame is treated as a 2D array of pixels.
-    # Using array slicing, we specify row_start:row_end, column_start:column_end.
-    # Essentially, the top right corner of the video is the coordinate
-    # (row_start, column_start) and the bottom right corner is the
-    # coordinate (row_end, column_end).
-    # crop = frame[200:900, 700:1600]
+    # Crop video based on ROI
     crop = frame[int(roi[1]):int(roi[1]+roi[3]),
                  int(roi[0]):int(roi[0]+roi[2])]
     img_height, img_width = crop.shape[:2]
