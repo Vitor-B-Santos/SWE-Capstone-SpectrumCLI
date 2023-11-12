@@ -13,11 +13,14 @@ center = 1.0
 span = 100.0
 
 # Canny detect threshold values
-lower = 190
+lower = 180
 upper = 200
 
 amplitudes = []
 frame_data = []
+
+_, first_frame = capture.read()
+roi = cv2.selectROI(first_frame)
 
 while True:
     ret, frame = capture.read()
@@ -31,7 +34,9 @@ while True:
     # Essentially, the top right corner of the video is the coordinate
     # (row_start, column_start) and the bottom right corner is the
     # coordinate (row_end, column_end).
-    crop = frame[200:900, 700:1600]
+    # crop = frame[200:900, 700:1600]
+    crop = frame[int(roi[1]):int(roi[1]+roi[3]),
+                 int(roi[0]):int(roi[0]+roi[2])]
     img_height, img_width = crop.shape[:2]
 
     # Convert to grayscale and blur to remove noise
@@ -49,7 +54,7 @@ while True:
     # Identify shapes in black and white mask
     # Find contours returns a list of contour object which we can work with
     # individually (contours[0], contours[1], etc.).
-    contours, hierarchy = cv2.findContours(
+    contours, _ = cv2.findContours(
         binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
     )
 
