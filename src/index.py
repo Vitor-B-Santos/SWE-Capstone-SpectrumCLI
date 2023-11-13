@@ -9,14 +9,15 @@ capture = cv2.VideoCapture("./videos/Pulsed Signal.mp4")
 
 # Properties of spectrum analyzer
 scale = -100
-center = 1.0
-span = 100.0
+center = 1.0 # GHz
+span = 0.1 # GHz
 
 # Canny detect threshold values
 lower = 180
 upper = 200
 
 amplitudes = []
+frequencies = []
 frame_data = []
 
 _, first_frame = capture.read()
@@ -80,6 +81,10 @@ while True:
         x, y, w, h = cv2.boundingRect(c)
         cv2.rectangle(crop, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
+        non_zero = np.nonzero(binary_mask)
+        frequency = (non_zero[0][0] / img_width) * (span * 10) + (center / 2)
+        frequencies.append(frequency)
+		
         # Use y position to calculate amplitude
         amp = (y / img_height) * scale
         amplitudes.append(amp)
@@ -92,20 +97,20 @@ while True:
     # get the current timestampt
     timestamp = datetime.datetime.now()
 
-    # data processing
-    if amplitudes:
-        max_amp = max(amplitudes)
-        min_amp = min(amplitudes)
-        average_amp = sum(amplitudes) / len(amplitudes)
-
-        # Frequency calculation
-        frequency = 0
-
-        # add data from current frame to list
-        frame_data.append([timestamp, min_amp, max_amp, average_amp, frequency])
-
 capture.release()
 cv2.destroyAllWindows()
+
+# data processing
+if amplitudes:
+    max_amp = max(amplitudes)
+    min_amp = min(amplitudes)
+    average_amp = sum(amplitudes) / len(amplitudes)
+
+    # Frequency calculation
+    average_freq = sum(frequencies) / len(frequencies)
+    print(average_freq)
+    # add data from current frame to list
+    # frame_data.append([timestamp, min_amp, max_amp, average_amp, frequency])
 
 df = pd.DataFrame(
     frame_data,
