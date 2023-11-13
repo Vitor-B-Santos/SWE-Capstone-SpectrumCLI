@@ -5,7 +5,7 @@ import matplotlib.pyplot as pit
 import datetime
 import csv_utils
 
-capture = cv2.VideoCapture("./videos/Pulsed Signal.mp4")
+capture = cv2.VideoCapture("./videos/signal.mp4")
 
 # Properties of spectrum analyzer
 scale = -100
@@ -21,7 +21,7 @@ _, first_frame = capture.read()
 
 instructions = [
     "Instructions:",
-    "- Click and drag to select ROI",
+    "- Click and drag to select the dimensions around the graph only",
     "- Press 'Enter' to confirm selection",
     "- Cancel the selection process by pressing c button!",
     "- Press 'q' to exit",
@@ -39,7 +39,7 @@ for i, instruction in enumerate(instructions):
     )
 
 roi = cv2.selectROI(first_frame)
-cv2.destroyWindow("ROI Selection Instructions")
+# cv2.destroyWindow("ROI Selection Instructions")
 
 # Canny detect threshold values
 mean_intensity = np.mean(cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY))
