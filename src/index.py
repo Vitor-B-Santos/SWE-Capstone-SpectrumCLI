@@ -9,17 +9,14 @@ capture = cv2.VideoCapture("./videos/Pulsed Signal.mp4")
 
 # Properties of spectrum analyzer
 scale = -100
-center = 1.0 # GHz
-span = 0.1 # GHz
-
-# Canny detect threshold values
-lower = 180
-upper = 200
+center = 1.0  # GHz
+span = 0.1  # GHz
 
 amplitudes = []
 frequencies = []
 frame_data = []
 
+# roi selector
 _, first_frame = capture.read()
 
 instructions = [
@@ -27,14 +24,36 @@ instructions = [
     "- Click and drag to select ROI",
     "- Press 'Enter' to confirm selection",
     "- Cancel the selection process by pressing c button!",
-    "- Press 'q' to exit"
+    "- Press 'q' to exit",
 ]
 
 for i, instruction in enumerate(instructions):
-    cv2.putText(first_frame, instruction, (10, 30 + i * 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    cv2.putText(
+        first_frame,
+        instruction,
+        (10, 30 + i * 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1,
+        (255, 255, 255),
+        2,
+    )
 
 roi = cv2.selectROI(first_frame)
 cv2.destroyWindow("ROI Selection Instructions")
+
+# Canny detect threshold values
+mean_intensity = np.mean(cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY))
+std_dev_intensity = np.std(cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY))
+
+if std_dev_intensity < 50:
+    # lower = int(max(0, mean_intensity - std_dev_intensity))
+    # upper = int(min(255, mean_intensity + std_dev_intensity))
+    lower = 145
+    upper = 210
+else:
+    lower = 190
+    upper = 230
+
 
 while True:
     ret, frame = capture.read()
@@ -43,21 +62,23 @@ while True:
         break
 
     # Crop video based on ROI
-    crop = frame[int(roi[1]):int(roi[1]+roi[3]),
-                 int(roi[0]):int(roi[0]+roi[2])]
+    crop = frame[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])]
     img_height, img_width = crop.shape[:2]
 
     # Convert to grayscale and blur to remove noise
     gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
 
-    blur = cv2.medianBlur(gray, 5)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    mask = cv2.inRange(blurred, lower, upper)
 
     # Detect Edges
-    canny = cv2.Canny(blur, lower, upper)
+    canny = cv2.Canny(mask, lower, upper)
 
     # Make edge lines thicker
     kernel = np.ones((5, 5), np.uint8)
-    binary_mask = cv2.dilate(canny, kernel, iterations=5)
+    binary_mask = cv2.dilate(canny, kernel, iterations=4)
+    binary_mask = cv2.erode(binary_mask, kernel, iterations=1)
 
     # Identify shapes in black and white mask
     # Find contours returns a list of contour object which we can work with
@@ -84,12 +105,13 @@ while True:
         non_zero = np.nonzero(binary_mask)
         frequency = (non_zero[0][0] / img_width) * (span * 10) + (center / 2)
         frequencies.append(frequency)
-		
+
         # Use y position to calculate amplitude
         amp = (y / img_height) * scale
         amplitudes.append(amp)
 
     cv2.imshow("Edge", crop)
+    # cv2.imshow("Edge", canny)
     key = cv2.waitKey(30)
     if key == 27:
         break
