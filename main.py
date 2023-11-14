@@ -3,6 +3,37 @@ import os
 import argparse
 
 
+    
+    
+    
+def main():
+    
+    file_name = input('Enter the path to the file: ')
+    index_file = 'src/index.py'
+
+    print(f'filename:  {file_name}')
+    
+    #Define a function to validate the file type
+    def is_valid_mp4_file(filename):
+    #check if the file is an mp4 file
+        if not filename.lower().endswith(".mp4"):
+         raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
+        return filename
+
+
+    try:
+        with open(index_file, 'r') as file:
+            code = file.read()
+            is_valid_mp4_file(file_name)
+            var = {'file_name' : file_name}
+            exec(code, var)
+    except FileNotFoundError:
+        print(f"file not found: {file_name}")
+    except Exception as p:
+        print(f"An error occurred: {p}")
+main()
+
+
 #Define a function to validate the file type
 def is_valid_mp4_file(filename):
     #check if the file is an mp4 file
