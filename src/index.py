@@ -3,9 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as pit
 import datetime
-import csv_utils
 
-capture = cv2.VideoCapture("./videos/signal.mp4")
+capture = cv2.VideoCapture(file_name)
 
 # Properties of spectrum analyzer
 scale = -100
