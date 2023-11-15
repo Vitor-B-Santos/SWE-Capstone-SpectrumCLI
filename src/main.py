@@ -1,88 +1,92 @@
 from argparse import ArgumentParser, Namespace
 import os
 import argparse
-import shutil
-import cv2
 
 
-# Define a function to validate the file type
-def is_valid_mp4_file(filename):
-    # check if the file is an mp4 file
-    if not filename.lower().endswith(".mp4"):
-        raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
-    return filename
+    
+    
+    
+def main():
+    
+    index_file = 'src/index.py'
+    c = 'y'
+    video_file_path = 'src/videos'
+    video_files = os.listdir(video_file_path)
+    file_names = []
+    for file_name in video_files:
+        file_names.append(file_name)
+    entered_span = []
+    entered_center = []
+    entered_threshold = []
+        
+    
+    
+    #Define a function to validate the file type
+    def is_valid_mp4_file(filename):
+    #check if the file is an mp4 file
+        if not filename.lower().endswith(".mp4"):
+         raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
+        return filename
+
+    while c == 'y':
+        for video in file_names:
+            try:
+                entered_center = input('Enter the center (GHz): ')
+                entered_span = input('Enter the span (GHz): ')
+                entered_threshold = input('Enter the threshold for reporting: ')
+                with open(index_file, 'r') as file:
+                    code = file.read()
+                    if(is_valid_mp4_file(video) == video):
+                        var = {'file_name' : video_file_path + '/' + video, 'entered_span' : entered_span, 'entered_center' : entered_center, 'entered_threshold' : entered_threshold}
+                        exec(code, var)
+                    else:
+                        print(is_valid_mp4_file(file_name))        
+            except FileNotFoundError:
+                print(f"file not found: {file_name}")
+            except Exception as p:
+                print(f"An error occurred: {p}")
+        c = input('Continue y/n? {c}')
+        print(c)
+        
+        
+main()
 
 
-# create the main parser argument
-parser = ArgumentParser(
-    description="CLI for working analizing Spectrum Analizer mp4 files"
-)
+# #Define a function to validate the file typete
+# def is_valid_mp4_file(filename):
+#     #check if the file is an mp4 file
+#     if not filename.lower().endswith(".mp4"):
+#         raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
+#     return filename
 
-# create subparsers obj for handling commands
-subparsers = parser.add_subparsers(dest="command", title="Commands")
+# #create the main parser argument
+# parser = ArgumentParser(description="CLI for working analizing Spectrum Analizer mp4 files")
 
-# Add an argument for the input MP4 file with the validation function
-read_parser = subparsers.add_parser("r", help="Read an MP4 video file")
-read_parser.add_argument(
-    "input_file", type=is_valid_mp4_file, help="path to the imput mp4 file."
-)
+# #create subparsers obj for handling commands
+# subparsers = parser.add_subparsers(dest="command", title="Commands")
 
-# Add an argument for the processing of an MP4 file with validation
-process_parser = subparsers.add_parser("p", help="Process an MP4 Video file")
-process_parser.add_argument(
-    "input_file", type=is_valid_mp4_file, help="Path to the input MP4 file"
-)
+# # Add an argument for the input MP4 file with the validation function
+# read_parser = subparsers.add_parser("r", help="Read an MP4 video file")
+# read_parser.add_argument("input_file", type=is_valid_mp4_file, help="path to the imput mp4 file.")
 
-help_parser = subparsers.add_parser("h", help="Display help information for CLI")
-# parse the command-line arguments
-args: Namespace = parser.parse_args()
+# #Add an argument for the processing of an MP4 file with validation
+# process_parser = subparsers.add_parser("p", help="Process an MP4 Video file")
+# process_parser.add_argument("input_file", type=is_valid_mp4_file, help="Path to the input MP4 file")
 
-# Preform the action based on the given subcommand
-if args.command == "r":
-    print(f"Input file '{args.input_file}' is accepted.")
+# help_parser = subparsers.add_parser("h", help="Display help information for CLI")
+# #parse the command-line arguments
+# args: Namespace = parser.parse_args()
 
-    #videos_dir = os.path.join("videos")
-    #if not os.path.exists(videos_dir):
-    #    os.makedirs(videos_dir)
+# #Preform the action based on the given subcommand
+# if args.command == "r":
+#     print(f"Input file '{args.input_file}' is accepted.")
 
-    #destination = os.path.join(videos_dir, os.path.basename(args.input_file))
-    #shutil.copy(args.input_file, destination)
-    #print(f"Video copied to '{destination}'")
+# elif args.command == "p":
+#     print(f"Input file '{args.input_file}' is processing...")
+# elif args.command == "h":
+#     parser.print_help()
 
-elif args.command == "p":
-    print(f"Input file '{args.input_file}' is processing...")
+# else:
+#     #handle case where no subcommand is provided
+#     print("No subcommand specified. Please try again or use help")
 
-    capture = cv2.VideoCapture("./videos/" + args.input_file)
-
-    # Tweak and test these
-    lower = 200  # Lower threshold value
-    upper = 300  # Upper threshold value
-
-    while True:
-        ret, frame = capture.read()
-
-        # Crop Video
-        # The frame is treated as a 2D array of pixels.
-        # Using array slicing, we specify row_start:row_end, column_start:column_end.
-        # Essentially, the top right corner of the video is the coordinate
-        # (row_start, column_start) and the bottom right corner is the
-        # coordinate (row_end, column_end).
-        crop = frame[150:1000, 700:1600]
-
-        edge = cv2.Canny(crop, lower, upper)
-
-        cv2.imshow("Edge", edge)
-
-        key = cv2.waitKey(30)
-        if key == 27:
-            break
-
-    capture.release()
-    cv2.destroyAllWindows()
-
-elif args.command == "h":
-    parser.print_help()
-
-else:
-    # handle case where no subcommand is provided
-    print("No subcommand specified. Please try again or use help")
