@@ -176,13 +176,15 @@ def convert_to_csv(df):
     print(f"DataFrame saved as CSV in '{file_path}'")
 
 
-# convert raw frame data into csv
-convert_to_csv(df)
-print("Frame data has been stored in csv file. Awaiting processing...")
+print("Frame data has been collected. Awaiting processing...")
 
 # filter dataframe using user defined threshold value
-df = df.filter(df["amplitudes"] > threshold)
+filtered_df = df[df["amplitudes"] > threshold]
 
-# convert updated dataframe into csv
-convert_to_csv(df)
-print("Frame data has been processed and stored in new .csv file")
+# Check if the filtered dataframe is not empty before converting to csv
+if not filtered_df.empty:
+    # convert updated dataframe into csv
+    convert_to_csv(filtered_df)
+    print("Frame data has been processed and stored in new .csv file")
+else:
+    print("No data met the threshold criteria.")
