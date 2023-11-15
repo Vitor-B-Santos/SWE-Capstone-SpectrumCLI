@@ -91,8 +91,8 @@ while True:
 
     # Skip frames when the largest contour does not meet a minimum size
     # This is to avoid recording data in the frames where the radio signal briefly disappears
-    if int(cv2.contourArea(c)) > 30_000:
-        binary_mask = cv2.drawContours(
+    if int(cv2.contourArea(c)) > 20_000:
+        cv2.drawContours(
             crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA
         )
 
@@ -100,13 +100,17 @@ while True:
         # amount of offset from x and y respectively, aka width and height.
         x, y, w, h = cv2.boundingRect(c)
         cv2.rectangle(crop, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        
+        # Determine the (x,y) position of the highest peak that belongs to the contour
+        # Useful documentation https://docs.opencv.org/3.4/d1/d32/tutorial_py_contour_properties.html
+        highest_point = tuple(c[c[:, :, 1].argmin()][0])
 
-        non_zero = np.nonzero(binary_mask)
-        frequency = (non_zero[0][0] / img_width) * (span * 10) + (center / 2)
+        # Use x position of highest point on contour to calculate frequency
+        frequency = (highest_point[0] / img_width) * (span * 10) + (center / 2)
         frequencies.append(frequency)
 
         # Use y position to calculate amplitude
-        amp = (y / img_height) * scale
+        amp = (highest_point[1] / img_height) * scale
         amplitudes.append(amp)
 
     cv2.imshow("Edge", crop)
@@ -126,8 +130,10 @@ if amplitudes:
     max_amp = max(amplitudes)
     min_amp = min(amplitudes)
     average_amp = sum(amplitudes) / len(amplitudes)
+    print(average_amp)
 
     # Frequency calculation
+    max_freq = max(frequencies)
     average_freq = sum(frequencies) / len(frequencies)
     print(average_freq)
     # add data from current frame to list
