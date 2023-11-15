@@ -9,8 +9,8 @@ capture = cv2.VideoCapture(file_name)
 
 # Properties of spectrum analyzer
 scale = -100
-center = 1.0  # GHz
-span = 0.1  # GHz
+center = float(entered_center)  # GHz
+span = float(entered_span)  # GHz
 
 amplitudes = []
 frequencies = []
@@ -105,7 +105,8 @@ while True:
         highest_point = tuple(c[c[:, :, 1].argmin()][0])
 
         # Use x position of highest point on contour to calculate frequency
-        frequency = (highest_point[0] / img_width) * (span * 10) + (center / 2)
+        scaling_factor = span / img_width
+        frequency = (center - span / 2) + (highest_point[0] * scaling_factor)
         frequencies.append(frequency)
 
         # Use y position to calculate amplitude
