@@ -178,6 +178,12 @@ def convert_to_csv(df):
 
 print("Frame data has been collected. Awaiting processing...")
 
+df["Minimum Amplitude"] = min_amp
+df["Maximum Amplitude"] = max_amp
+df["Average Amplitude"] = average_amp
+df["Maximum Frequency"] = max_freq
+df["Average Frequency"] = average_freq
+
 # filter dataframe using user defined threshold value
 filtered_df = df[df["amplitudes"] > threshold]
 
