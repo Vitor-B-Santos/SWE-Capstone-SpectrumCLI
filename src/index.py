@@ -106,8 +106,8 @@ while True:
         highest_point = tuple(c[c[:, :, 1].argmin()][0])
 
         # Use x position of highest point on contour to calculate frequency
-        scaling_factor = ((center + span * 5) - (center - span * 5)) / img_width
-        frequency = (center - span * 5) + (highest_point[0] * scaling_factor)
+        scaling_factor = span / img_width
+        frequency = (center - span / 2) + (highest_point[0] * scaling_factor)
         frequencies.append(frequency)
 
         # Use y position to calculate amplitude
