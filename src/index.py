@@ -11,6 +11,7 @@ capture = cv2.VideoCapture(file_name)
 scale = -100
 center = float(entered_center)  # GHz
 span = float(entered_span)  # GHz
+threshold = float(entered_threshold)
 
 amplitudes = []
 frequencies = []
@@ -175,7 +176,13 @@ def convert_to_csv(df):
     print(f"DataFrame saved as CSV in '{file_path}'")
 
 
+# convert raw frame data into csv
 convert_to_csv(df)
+print("Frame data has been stored in csv file. Awaiting processing...")
 
-print(df)
-print("done")
+# filter dataframe using user defined threshold value
+df = df.filter(df["amplitudes"] > threshold)
+
+# convert updated dataframe into csv
+convert_to_csv(df)
+print("Frame data has been processed and stored in new .csv file")

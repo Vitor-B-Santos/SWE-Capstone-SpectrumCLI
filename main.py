@@ -3,40 +3,52 @@ import os
 import argparse
 
 
-    
-    
-    
 def main():
-    
-    index_file = 'src/index.py'
-    c = 'y'
-    
-    #Define a function to validate the file type
+    index_file = "src/index.py"
+    c = "y"
+    video_file_path = "src/videos"
+    video_files = os.listdir(video_file_path)
+    file_names = []
+    for file_name in video_files:
+        file_names.append(file_name)
+    entered_span = []
+    entered_center = []
+    entered_threshold = []
+
+    # Define a function to validate the file type
     def is_valid_mp4_file(filename):
-    #check if the file is an mp4 file
+        # check if the file is an mp4 file
         if not filename.lower().endswith(".mp4"):
-         raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
+            raise argparse.ArgumentTypeError("Input file must have a '.mp4 extension")
         return filename
 
-    while c == 'y':
-        try:
-            file_name = input('Enter the path to the file: ')
-            entered_center = input('Enter the center (GHz): ')
-            entered_span = input('Enter the span (GHz): ')
-            print(f'filename:  {file_name}')
-            with open(index_file, 'r') as file:
-                code = file.read()
-                if(is_valid_mp4_file(file_name) == file_name):
-                    var = {'file_name' : file_name, 'entered_span' : entered_span, 'entered_center' : entered_center}
-                    exec(code, var)
-                else:
-                    print(is_valid_mp4_file(file_name))        
-        except FileNotFoundError:
-            print(f"file not found: {file_name}")
-        except Exception as p:
-            print(f"An error occurred: {p}")
-        c = input('Continue y/n? {c}')
+    while c == "y":
+        for video in file_names:
+            try:
+                file_name = input("Enter the path to the file: ")
+                entered_center = input("Enter the center (GHz): ")
+                entered_span = input("Enter the span (GHz): ")
+                entered_threshold = input("Enter the threshold for reporting: ")
+                with open(index_file, "r") as file:
+                    code = file.read()
+                    if is_valid_mp4_file(video) == video:
+                        var = {
+                            "file_name": video_file_path + "/" + video,
+                            "entered_span": entered_span,
+                            "entered_center": entered_center,
+                            "entered_threshold": entered_threshold,
+                        }
+                        exec(code, var)
+                    else:
+                        print(is_valid_mp4_file(file_name))
+            except FileNotFoundError:
+                print(f"file not found: {file_name}")
+            except Exception as p:
+                print(f"An error occurred: {p}")
+        c = input("Continue y/n? {c}")
         print(c)
+
+
 main()
 
 
@@ -77,4 +89,3 @@ main()
 # else:
 #     #handle case where no subcommand is provided
 #     print("No subcommand specified. Please try again or use help")
-
