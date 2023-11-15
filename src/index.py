@@ -1,8 +1,9 @@
 import cv2
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as pit
+import matplotlib.pyplot as plt
 import datetime
+import os
 
 capture = cv2.VideoCapture(file_name)
 
@@ -92,15 +93,13 @@ while True:
     # Skip frames when the largest contour does not meet a minimum size
     # This is to avoid recording data in the frames where the radio signal briefly disappears
     if int(cv2.contourArea(c)) > 20_000:
-        cv2.drawContours(
-            crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA
-        )
+        cv2.drawContours(crop, [c], -1, (0, 255, 0), 3, lineType=cv2.LINE_AA)
 
         # The coordinate (x,y) is the top left corner of the rectangle. w and h are the
         # amount of offset from x and y respectively, aka width and height.
         x, y, w, h = cv2.boundingRect(c)
         cv2.rectangle(crop, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        
+
         # Determine the (x,y) position of the highest peak that belongs to the contour
         # Useful documentation https://docs.opencv.org/3.4/d1/d32/tutorial_py_contour_properties.html
         highest_point = tuple(c[c[:, :, 1].argmin()][0])
@@ -112,6 +111,11 @@ while True:
         # Use y position to calculate amplitude
         amp = (highest_point[1] / img_height) * scale
         amplitudes.append(amp)
+
+        # Get timestamp of current frame
+        timestamp = datetime.datetime.now()
+
+        frame_data.append([timestamp, amp, frequency])
 
     cv2.imshow("Edge", crop)
     # cv2.imshow("Edge", canny)
@@ -136,21 +140,41 @@ if amplitudes:
     max_freq = max(frequencies)
     average_freq = sum(frequencies) / len(frequencies)
     print(average_freq)
-    # add data from current frame to list
-    # frame_data.append([timestamp, min_amp, max_amp, average_amp, frequency])
 
 df = pd.DataFrame(
     frame_data,
     columns=[
         "Timestamp",
-        "Min Amplitude",
-        "Max Amplitude",
-        "Average Amplitude",
-        "Frequency",
+        "amplitudes",
+        "frequencies",
     ],
 )
 
-csv_utils.save_as_csv(df)
+
+def convert_to_csv(df):
+    # Check if the DataFrame is valid
+    if df is None or df.empty:
+        print("The DataFrame is empty or not defined.")
+        return
+
+    # Generate a timestamp-based filename
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{timestamp}.csv"
+
+    # Check if the output directory exists, if not, create it
+    output_dir = "output_csvs"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Construct the full file path
+    file_path = os.path.join(output_dir, filename)
+
+    # Save the DataFrame as a CSV
+    df.to_csv(file_path, index=False)
+    print(f"DataFrame saved as CSV in '{file_path}'")
+
+
+convert_to_csv(df)
 
 print(df)
 print("done")
