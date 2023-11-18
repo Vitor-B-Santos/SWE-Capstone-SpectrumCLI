@@ -23,30 +23,29 @@ def main():
         return filename
 
     while c == "y":
-        for video in file_names:
-            try:
-                file_name = input("Enter the path to the file: ")
-                entered_center = input("Enter the center (GHz): ")
-                entered_span = input("Enter the span (GHz): ")
-                entered_threshold = input("Enter the threshold for reporting: ")
-                with open(index_file, "r") as file:
-                    code = file.read()
-                    if is_valid_mp4_file(video) == video:
-                        var = {
-                            "file_name": video_file_path + "/" + video,
-                            "entered_span": entered_span,
-                            "entered_center": entered_center,
-                            "entered_threshold": entered_threshold,
-                        }
-                        exec(code, var)
-                    else:
-                        print(is_valid_mp4_file(file_name))
-            except FileNotFoundError:
-                print(f"file not found: {file_name}")
-            except Exception as p:
-                print(f"An error occurred: {p}")
-        c = input("Continue y/n? {c}")
-        print(c)
+        try:
+            file_name = input("Enter the path to the file: ")
+            entered_center = input("Enter the center (GHz): ")
+            entered_span = input("Enter the span (GHz): ")
+            entered_threshold = input("Enter the threshold for reporting: ")
+            with open(index_file, "r") as file:
+                code = file.read()
+                if is_valid_mp4_file(file_name) == file_name:
+                    var = {
+                        "file_name": video_file_path + "/" + file_name,
+                        "entered_span": entered_span,
+                        "entered_center": entered_center,
+                        "entered_threshold": entered_threshold,
+                    }
+                    exec(code, var)
+                else:
+                    print(is_valid_mp4_file(file_name))
+        except FileNotFoundError:
+            print(f"file not found: {file_name}")
+        except Exception as p:
+            print(f"An error occurred: {p}")
+    c = input("Continue y/n? {c}")
+    print(c)
 
 
 main()
