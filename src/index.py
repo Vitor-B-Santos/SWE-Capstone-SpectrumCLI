@@ -4,8 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 import os
+from VideoTimestamp import VideoTimestamp
 
 capture = cv2.VideoCapture(file_name)
+frame_rate = capture.get(cv2.CAP_PROP_FPS)
+video_timestamp = VideoTimestamp(frame_rate)
 
 # Properties of spectrum analyzer
 scale = -100
@@ -62,6 +65,9 @@ while True:
     if frame is None:
         break
 
+    video_timestamp.update_frame_count()
+    formatted_time = video_timestamp.get_formatted_time()
+
     # Crop video based on ROI
     crop = frame[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])]
     img_height, img_width = crop.shape[:2]
@@ -114,19 +120,13 @@ while True:
         amp = (highest_point[1] / img_height) * scale
         amplitudes.append(amp)
 
-        # Get timestamp of current frame
-        timestamp = datetime.datetime.now()
-
-        frame_data.append([timestamp, amp, frequency])
+        frame_data.append([formatted_time, amp, frequency])
 
     cv2.imshow("Edge", crop)
     # cv2.imshow("Edge", canny)
     key = cv2.waitKey(30)
     if key == 27:
         break
-
-    # get the current timestampt
-    timestamp = datetime.datetime.now()
 
 capture.release()
 cv2.destroyAllWindows()

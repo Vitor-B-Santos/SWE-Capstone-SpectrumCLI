@@ -1,6 +1,9 @@
 from argparse import ArgumentParser, Namespace
 import os
 import argparse
+import sys
+sys.path.append('src')  # Add the 'src' directory to the Python path
+from VideoTimestamp import VideoTimestamp
 
 
 def main():
