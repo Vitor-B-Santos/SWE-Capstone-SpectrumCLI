@@ -14,7 +14,11 @@ Military Flight Test Ranges have a selection of Radio Frequency (RF) Threat Syst
 
 ## Installation
 
-Ensure that the necessary libraries are installed:
+This tool requires an installation of Python 3. To install the latest version of python, you can download it for free from the link:
+
+> https://www.python.org/downloads/
+
+Once Python is installed, ensure that the necessary libraries are installed:
 
 ```
 pip install opencv-python pandas numpy
