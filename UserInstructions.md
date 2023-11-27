@@ -26,16 +26,16 @@ pip install opencv-python pandas numpy
 
 ## Usage
 
-To begin running the Spectrum Analyzer Analysis Tool, execute `main.py` with the following command:
+To begin running the Spectrum Analyzer Analysis Tool, execute `SpectrumCLI.py` with the following command:
 
 ```
-python main.py
+python SpectrumCLI.py
 ```
 
 A prompt will appear for entering the name of a file. This file must be a video file of a spectrum analyzer ending in the `.mp4` extension.
 
 ```
-Enter the path to the file: <file_path>
+Enter the name of the file in the src/videos folder: <file_name>
 ```
 
 Next, the program will provide prompts for entering values related to the properties of the spectrum analyzer in the video. If necessary, refer to the video for these values.
@@ -44,7 +44,7 @@ Next, the program will provide prompts for entering values related to the proper
 
 ```
 Enter the center (GHz): <center_value>
-Enter the span (GHz): <span_value>
+Enter the span (GHz, 1000 MHz in 1 GHz): <span_value>
 ```
 
 After these values have been entered, a prompt will ask for a threshold value. This threshold defines the baseline frequency in the video. It allows for filtering for instances in the video when the signal peak goes above this passed threshold value.
